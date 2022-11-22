@@ -34,7 +34,7 @@ class Dinosaur:
             self.dino_rect.y = Y_POS
             self.dino_jump = False
             self.jump_vel = JUMP_VEL
-
+            
     def update(self, user_input):
         if self.dino_run:
             self.run()
