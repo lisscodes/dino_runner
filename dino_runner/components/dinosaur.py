@@ -1,13 +1,15 @@
 import pygame
+from pygame.sprite import Sprite
 
 from dino_runner.utils.constants import RUNNING, JUMPING, DUCKING
 
 X_POS = 80
 Y_POS = 310
 JUMP_VEL = 8.5
+Y_POS_DUCK = Y_POS + 40
 
 
-class Dinosaur:
+class Dinosaur(Sprite):
     def __init__(self):
         self.image = RUNNING[0]
         self.dino_rect = self.image.get_rect() ##pega a dimensão da imagem
@@ -39,8 +41,9 @@ class Dinosaur:
     def duck(self):
         self.image = DUCKING[0] if self.step_index == 0 else DUCKING[1]
         self.dino_rect.x = X_POS
-        self.dino_rect.y = Y_POS + 40
-        self.step_index += 1       
+        self.dino_rect.y = Y_POS_DUCK
+        self.step_index += 1
+        self.dino_duck = False       
             
     def update(self, user_input):
         if self.dino_run:
@@ -53,18 +56,18 @@ class Dinosaur:
         if user_input[pygame.K_UP] and not self.dino_jump:
             self.dino_jump = True
             self.dino_run = False
-        elif not self.dino_jump:
+            self.dino_duck = False
+        elif user_input[pygame.K_DOWN] and not self.dino_jump:
+            self.dino_run = False
             self.dino_jump = False
             self.dino_run = True
+        elif not self.dino_jump and not self.dino_duck:
+            self.dino_jump = False
+            self.dino_run = True
+            self.dino_duck = False
 
         if self.step_index >= 10:
-            self.step_index = 0
-
-        while user_input[pygame.K_DOWN]:
-            self.dino_duck = True
-            self.dino_run = False
-            break    
-
+            self.step_index = 0   
 
     def draw(self, screen):
         screen.blit(self.image, (self.dino_rect.x, self.dino_rect.y))
