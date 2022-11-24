@@ -14,4 +14,3 @@ class Bird(Obstacle):
 
         if self.step_index >= 10:
             self.step_index = 0
-        self.step_index += 1
