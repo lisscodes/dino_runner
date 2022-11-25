@@ -1,9 +1,10 @@
 import pygame
 
-from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DEAD, DEFAULT_TYPE
+from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DEAD, DEFAULT_TYPE, RESET
 from dino_runner.utils.text_utils import draw_message_component
 from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
+from dino_runner.components.obstacles.cloud import Cloud
 from dino_runner.components.power_ups.power_up_manager import PowerUpManager
 
 RECORD_COLOR = pygame.Color(202, 197, 196)
@@ -26,6 +27,7 @@ class Game:
         self.y_pos_bg = 380
         self.player = Dinosaur()
         self.obstacle_manager = ObstacleManager()
+        self.cloud = Cloud()
         self.power_up_manager = PowerUpManager()
 
     def execute(self):
@@ -56,6 +58,7 @@ class Game:
         user_input = pygame.key.get_pressed()
         self.player.update(user_input)
         self.obstacle_manager.update(self)
+        self.cloud.update(self.game_speed)
         self.update_score()
         self.power_up_manager.update(self.score, self.game_speed, self.player)
 
@@ -73,6 +76,7 @@ class Game:
         self.draw_background()
         self.player.draw(self.screen)
         self.obstacle_manager.draw(self.screen)
+        self.cloud.draw(self.screen)
         self.draw_score()
         self.draw_power_up_time()
         self.power_up_manager.draw(self.screen)
@@ -89,12 +93,18 @@ class Game:
         self.x_pos_bg -= self.game_speed
 
     def draw_score(self):
-        draw_message_component(f"Score:{self.score}", self.screen,
-        pos_x_center=1000,
-        pos_y_center=15)
-        draw_message_component(f"Record:{self.record}", self.screen,
-        pos_x_center=1000,
-        pos_y_center=35)
+        draw_message_component(
+            f"Score:{self.score}", 
+            self.screen,
+            pos_x_center=1000,
+            pos_y_center=15)
+        draw_message_component(
+            f"Record:{self.record}", 
+            self.screen,
+            pos_x_center = 1000,
+            pos_y_center = 35,
+            font_color = RECORD_COLOR
+        )
 
     def draw_power_up_time(self):
         if self.player.has_power_up:
@@ -125,32 +135,47 @@ class Game:
         half_screen_width = SCREEN_WIDTH // 2
 
         if self.death_count == 0:
-            draw_message_component("Press any key to start", self.screen)
-        else:
-            draw_message_component("Press any key to restart", self.screen, pos_y_center=half_screen_height + 140)
             draw_message_component(
-                f"Your Score: {self.score}",
+                f"Press any key to start", 
+                self.screen, 
+                pos_x_center = 550, 
+                pos_y_center = 550 // 2, 
+                font_size = 45
+            )
+            self.screen.blit(ICON, (half_screen_width - 50, half_screen_height + 40))
+        else:
+            draw_message_component(
+                f"You Died", 
+                self.screen, 
+                pos_y_center = half_screen_height - 170, 
+                font_size = 70
+            )
+            draw_message_component(
+                f"Deaths: {self.death_count}",
                 self.screen,
-                pos_y_center=half_screen_height - 150
+                pos_y_center = half_screen_height,
+                font_size = 40
             )          
             draw_message_component(
-                f"Death count: {self.death_count}",
+                f"Score: {self.score}",
                 self.screen,
-                pos_y_center=half_screen_height - 100
+                pos_y_center = half_screen_height + 50,
+                font_size = 45
             )
-            self.screen.blit(ICON, (half_screen_width - 40, half_screen_height - 40))
-
-        """if self.death_count == 0:
-            draw_message_component("Press any key to start", 550, 550 // 2, 45, (0, 0, 0))
-            self.screen.blit(ICON, (half_screen_width - 20, half_screen_height - 140))
-        else:
-            draw_message_component("You Died",  half_screen_width, half_screen_height - 170, 70, (0, 0, 0))
-            draw_message_component(f"Deaths: {self.death_count}", half_screen_width, half_screen_height, 40, (0, 0, 0))
-            draw_message_component(f"Score: {self.score}",  half_screen_width, half_screen_height + 50, 45, (0, 0, 0))
-            draw_message_component(f"Record: {self.record}", half_screen_width, half_screen_height + 100, 47, (0, 0, 0))
-            draw_message_component("Press any key to restart", half_screen_width, half_screen_height + 170, 50, (0, 0, 0))
+            draw_message_component(
+                f"Record: {self.record}",
+                self.screen,
+                pos_y_center = half_screen_height + 100,
+                font_size = 47
+            )
+            draw_message_component(
+                f"Press any key to restart", 
+                self.screen, 
+                pos_y_center = half_screen_height + 170,
+                font_size = 50
+            )
             self.screen.blit(DEAD, (half_screen_width - 40, half_screen_height - 120))
-            """
+            self.screen.blit(RESET, (half_screen_width - 35, half_screen_height + 210))
 
         pygame.display.update()
         self.handle_events_menu()
