@@ -64,10 +64,11 @@ BIRD = [
 CLOUD = pygame.image.load(os.path.join(IMG_DIR, 'Other/Cloud.png'))
 SHIELD = pygame.image.load(os.path.join(IMG_DIR, 'Other/shield.png'))
 HAMMER = pygame.image.load(os.path.join(IMG_DIR, 'Other/hammer.png'))
-DEAD = pygame.image.load(os.path.join(IMG_DIR, "Dino/DinoDead.png"))
+DEAD = pygame.image.load(os.path.join(IMG_DIR, 'Dino/DinoDead.png'))
 
 BG = pygame.image.load(os.path.join(IMG_DIR, 'Other/Track.png'))
 
 HEART = pygame.image.load(os.path.join(IMG_DIR, 'Other/SmallHeart.png'))
 
 DEFAULT_TYPE = "default"
+SHIELD_TYPE = "shield"
